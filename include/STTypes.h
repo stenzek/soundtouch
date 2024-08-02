@@ -47,13 +47,6 @@ typedef unsigned long   ulong;
 #define SOUNDTOUCH_ALIGN_POINTER_16(x)      ( ( (ulongptr)(x) + 15 ) & ~(ulongptr)15 )
 
 
-#if (defined(__GNUC__) && !defined(ANDROID))
-    // In GCC, include soundtouch_config.h made by config scritps.
-    // Skip this in Android compilation that uses GCC but without configure scripts.
-    #include "soundtouch_config.h"
-#endif
-
-
 namespace soundtouch
 {
     /// Max allowed number of channels
@@ -70,13 +63,6 @@ namespace soundtouch
     /// the dedicated mono/stereo processing routines will result in slower
     /// runtime performance so recommendation is to keep this off.
     // #define USE_MULTICH_ALWAYS
-
-    #if (defined(__SOFTFP__) && defined(ANDROID))
-        // For Android compilation: Force use of Integer samples in case that
-        // compilation uses soft-floating point emulation - soft-fp is way too slow
-        #undef  SOUNDTOUCH_FLOAT_SAMPLES
-        #define SOUNDTOUCH_INTEGER_SAMPLES      1
-    #endif
 
     #if !(SOUNDTOUCH_INTEGER_SAMPLES || SOUNDTOUCH_FLOAT_SAMPLES)
 
@@ -107,17 +93,14 @@ namespace soundtouch
         /// to make the library compile.
 
         #define SOUNDTOUCH_ALLOW_X86_OPTIMIZATIONS     1
-
-        /// In GNU environment, allow the user to override this setting by
-        /// giving the following switch to the configure script:
-        /// ./configure --disable-x86-optimizations
-        /// ./configure --enable-x86-optimizations=no
-        #ifdef SOUNDTOUCH_DISABLE_X86_OPTIMIZATIONS
-            #undef SOUNDTOUCH_ALLOW_X86_OPTIMIZATIONS
-        #endif
+        #undef SOUNDTOUCH_ALLOW_NEON_OPTIMIZATIONS
+    #elif defined(__arm__) || defined(__aarch64__)
+        #undef SOUNDTOUCH_ALLOW_X86_OPTIMIZATIONS
+        #define SOUNDTOUCH_ALLOW_NEON_OPTIMIZATIONS    1
     #else
         /// Always disable optimizations when not using a x86 systems.
         #undef SOUNDTOUCH_ALLOW_X86_OPTIMIZATIONS
+        #undef SOUNDTOUCH_ALLOW_NEON_OPTIMIZATIONS
 
     #endif
 
@@ -157,6 +140,9 @@ namespace soundtouch
             // Allow SSE optimizations
             #define SOUNDTOUCH_ALLOW_SSE       1
         #endif
+        #ifdef SOUNDTOUCH_ALLOW_NEON_OPTIMIZATIONS
+            #define SOUNDTOUCH_USE_NEON        1
+        #endif
 
     #endif  // SOUNDTOUCH_INTEGER_SAMPLES
 
@@ -169,7 +155,7 @@ namespace soundtouch
 }
 
 // define ST_NO_EXCEPTION_HANDLING switch to disable throwing std exceptions:
-// #define ST_NO_EXCEPTION_HANDLING    1
+#define ST_NO_EXCEPTION_HANDLING    1
 #ifdef ST_NO_EXCEPTION_HANDLING
     // Exceptions disabled. Throw asserts instead if enabled.
     #include <assert.h>

@@ -43,7 +43,7 @@
 namespace soundtouch
 {
 
-class InterpolateShannon : public TransposerBase
+class InterpolateShannon final : public TransposerBase
 {
 protected:
     int transposeMono(SAMPLETYPE *dest,

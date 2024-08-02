@@ -310,7 +310,6 @@ void BPMDetect::updateXCorr(int process_samples)
         tmp[i] = hamw[i] * hamw[i] * pBuffer[i];
     }
 
-    #pragma omp parallel for
     for (offs = windowStart; offs < windowLen; offs ++)
     {
         float sum;
@@ -349,7 +348,6 @@ void BPMDetect::updateBeatPos(int process_samples)
         tmp[i] = hamw2[i] * hamw2[i] * pBuffer[i];
     }
 
-    #pragma omp parallel for
     for (int offs = windowStart; offs < windowLen; offs++)
     {
         float sum = 0;

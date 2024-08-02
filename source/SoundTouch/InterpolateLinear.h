@@ -39,7 +39,7 @@ namespace soundtouch
 {
 
 /// Linear transposer class that uses integer arithmetic
-class InterpolateLinearInteger : public TransposerBase
+class InterpolateLinearInteger final : public TransposerBase
 {
 protected:
     int iFract;
@@ -69,7 +69,7 @@ public:
 
 
 /// Linear transposer class that uses floating point arithmetic
-class InterpolateLinearFloat : public TransposerBase
+class InterpolateLinearFloat final : public TransposerBase
 {
 protected:
     double fract;

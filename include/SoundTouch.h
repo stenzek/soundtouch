@@ -165,7 +165,7 @@ namespace soundtouch
 #define SETTING_INITIAL_LATENCY             8
 
 
-class SoundTouch : public FIFOProcessor
+class SoundTouch final : public FIFOProcessor
 {
 private:
     /// Rate transposer class instance
@@ -209,7 +209,7 @@ protected :
 
 public:
     SoundTouch();
-    virtual ~SoundTouch() override;
+    ~SoundTouch() override;
 
     /// Get SoundTouch library version string
     static const char *getVersionString();
@@ -282,7 +282,7 @@ public:
     /// Adds 'numSamples' pcs of samples from the 'samples' memory position into
     /// the input of the object. Notice that sample rate _has_to_ be set before
     /// calling this function, otherwise throws a runtime_error exception.
-    virtual void putSamples(
+    void putSamples(
             const SAMPLETYPE *samples,  ///< Pointer to sample buffer.
             uint numSamples                         ///< Number of samples in buffer. Notice
                                                     ///< that in case of stereo-sound a single sample
@@ -294,7 +294,7 @@ public:
     /// 'numsample' samples in the buffer, returns all that available.
     ///
     /// \return Number of samples returned.
-    virtual uint receiveSamples(SAMPLETYPE *output, ///< Buffer where to copy output samples.
+    uint receiveSamples(SAMPLETYPE *output, ///< Buffer where to copy output samples.
         uint maxSamples                 ///< How many samples to receive at max.
         ) override;
 
@@ -303,12 +303,12 @@ public:
     ///
     /// Used to reduce the number of samples in the buffer when accessing the sample buffer directly
     /// with 'ptrBegin' function.
-    virtual uint receiveSamples(uint maxSamples   ///< Remove this many samples from the beginning of pipe.
+    uint receiveSamples(uint maxSamples   ///< Remove this many samples from the beginning of pipe.
         ) override;
 
     /// Clears all the samples in the object's output and internal processing
     /// buffers.
-    virtual void clear() override;
+    void clear() override;
 
     /// Changes a setting controlling the processing system behaviour. See the
     /// 'SETTING_...' defines for available setting ID's.
@@ -326,7 +326,7 @@ public:
                    ) const;
 
     /// Returns number of samples currently unprocessed.
-    virtual uint numUnprocessedSamples() const;
+    uint numUnprocessedSamples() const;
 
     /// Return number of channels
     uint numChannels() const

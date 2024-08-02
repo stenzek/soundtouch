@@ -95,7 +95,7 @@ public:
 
 /// A common linear samplerate transposer class.
 ///
-class RateTransposer : public FIFOProcessor
+class RateTransposer final : public FIFOProcessor
 {
 protected:
     /// Anti-alias filter object
