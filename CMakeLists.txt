@@ -43,6 +43,9 @@ target_include_directories(SoundTouch PUBLIC
    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+target_include_directories(SoundTouch PRIVATE
+   ${CMAKE_CURRENT_SOURCE_DIR}/include/soundtouch
+)
 
 target_compile_definitions(SoundTouch PRIVATE ${COMPILE_DEFINITIONS})
 target_compile_options(SoundTouch PRIVATE ${COMPILE_OPTIONS})
@@ -63,11 +66,11 @@ endif()
 
 install(
   FILES
-    include/BPMDetect.h
-    include/FIFOSampleBuffer.h
-    include/FIFOSamplePipe.h
-    include/STTypes.h
-    include/SoundTouch.h
+    include/soundtouch/BPMDetect.h
+    include/soundtouch/FIFOSampleBuffer.h
+    include/soundtouch/FIFOSamplePipe.h
+    include/soundtouch/STTypes.h
+    include/soundtouch/SoundTouch.h
   DESTINATION
     "${CMAKE_INSTALL_INCLUDEDIR}/soundtouch"
 )
@@ -86,14 +89,17 @@ if(SOUNDTOUCH_DLL)
   target_compile_options(SoundTouchDLL PRIVATE ${COMPILE_OPTIONS})
   set_target_properties(SoundTouchDLL PROPERTIES CXX_VISIBILITY_PRESET hidden)
   target_compile_definitions(SoundTouchDLL PRIVATE DLL_EXPORTS)
-  target_include_directories(SoundTouchDLL PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+  target_include_directories(SoundTouchDLL INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+  target_include_directories(SoundTouchDLL PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/soundtouch")
   target_link_libraries(SoundTouchDLL PRIVATE SoundTouch)
   set_target_properties(SoundTouchDLL PROPERTIES OUTPUT_NAME "soundtouch")
-  set_target_properties(SoundTouchDLL PROPERTIES VERSION ${CMAKE_PROJECT_VERSION})
-  if(NOT WIN32)
-    set_target_properties(SoundTouchDLL PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+  if(NOT ANDROID)
+    set_target_properties(SoundTouchDLL PROPERTIES VERSION ${CMAKE_PROJECT_VERSION})
+    if(NOT WIN32)
+      set_target_properties(SoundTouchDLL PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+    endif()
   endif()
-  install(FILES source/SoundTouchDLL/SoundTouchDLL.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/soundtouch")
+  install(FILES include/soundtouch/SoundTouchDLL.h DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/soundtouch")
   install(TARGETS SoundTouchDLL EXPORT SoundTouchTargets)
 endif()
 
